@@ -17,6 +17,7 @@
 #include <chrono>
 #include <future>
 #include <memory>
+#include <string>
 #include <utility>
 #include <vector>
 
@@ -56,6 +57,52 @@ public:
     }
   }
 };
+
+TEST(Rosbag2PlayerTest, memory_corruption_in_player_class) {
+  rclcpp::init(0, nullptr);
+
+  std::cout << "from test: sizeof(Player) = " << sizeof(Player) << std::endl;
+  std::cout << "from test: sizeof(DebugPlayer) = " << sizeof(DebugPlayer) << std::endl;
+
+  std::string node_name = "rosbag2_player";
+//  rclcpp::NodeOptions node_options = rclcpp::NodeOptions();
+
+  auto player = std::make_shared<DebugPlayer>(node_name);
+  uint64_t local_mem_guard_value = 0;
+  EXPECT_EQ(local_mem_guard_value, 0U);
+
+  std::cout << "from test: sizeof(SerializedBagMessage) = " <<
+    sizeof(rosbag2_storage::SerializedBagMessage) << std::endl;
+
+  std::cout << "from test: sizeof(SerializedBagMessageSharedPtr) = " <<
+    sizeof(rosbag2_storage::SerializedBagMessageSharedPtr) << std::endl;
+
+  std::cout << "from test: sizeof(moodycamel::ReaderWriterQueue<SerializedBagMessage>) = " <<
+    sizeof(moodycamel::ReaderWriterQueue<rosbag2_storage::SerializedBagMessage>) << std::endl;
+
+  std::cout << "from test: sizeof(decltype(message_queue_)) = " <<
+    sizeof(decltype(player->message_queue_)) << std::endl;
+
+  std::cout << "from test: srv_pause_type_size_ = " <<
+    sizeof(DebugPlayer::service_pause_type) << std::endl;
+
+  EXPECT_EQ(player->srv_pause_type_size_, sizeof(DebugPlayer::service_pause_type));
+
+  EXPECT_EQ(player->message_queue_type_size_, sizeof(decltype(player->message_queue_)));
+
+  EXPECT_EQ(player->mem_corruption_marker0, 0U);
+  EXPECT_EQ(player->mem_corruption_marker1, 0U);
+  EXPECT_EQ(player->mem_corruption_marker2, 0U);
+  EXPECT_EQ(player->mem_corruption_marker3, 0U);
+  EXPECT_EQ(player->mem_corruption_marker4, 0U);
+  EXPECT_EQ(player->mem_corruption_marker5, 0U);
+  EXPECT_EQ(player->mem_corruption_marker6, 0U);
+  EXPECT_EQ(player->mem_corruption_marker7, 0U);
+  EXPECT_EQ(player->mem_corruption_marker8, 0U);
+//  EXPECT_EQ(player->mem_corruption_marker9, 0U);
+
+  rclcpp::shutdown();
+}
 
 TEST_F(RosBag2PlayTestFixture, play_next_with_false_preconditions) {
   auto primitive_message = get_messages_basic_types()[0];

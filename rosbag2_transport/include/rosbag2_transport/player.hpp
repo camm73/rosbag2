@@ -52,6 +52,51 @@ class Reader;
 namespace rosbag2_transport
 {
 
+struct MySerializedBagMessage
+{
+  rcutils_uint8_array_t * serialized_data;
+  rcutils_time_point_value_t time_stamp;
+  std::string topic_name;
+};
+
+class DebugPlayer  //: public rclcpp::Node
+{
+public:
+  ROSBAG2_TRANSPORT_PUBLIC
+  explicit DebugPlayer(const std::string & node_name);  // ,
+//    const rclcpp::NodeOptions & node_options);
+
+  void pause()
+  {
+    std::cout << "=====>>> DebugPlayer::Pause() called" << std::endl;
+  }
+
+  using service_pause_type = rclcpp::Service<rosbag2_interfaces::srv::Pause>;
+
+  using message_queue_type =
+    moodycamel::ReaderWriterQueue<rosbag2_storage::SerializedBagMessageSharedPtr>;
+  char message_queue_[sizeof(message_queue_type)]{0};
+
+  static const size_t message_queue_type_size_;
+
+  static const size_t srv_pause_type_size_;
+
+//  message_queue_type message_queue_;
+
+public:
+  uint64_t mem_corruption_marker0 = 0;
+  uint64_t mem_corruption_marker1 = 0;
+  uint64_t mem_corruption_marker2 = 0;
+//  rclcpp::Service<rosbag2_interfaces::srv::Pause>::SharedPtr srv_pause_;
+  uint64_t mem_corruption_marker3 = 0;
+  uint64_t mem_corruption_marker4 = 0;
+  uint64_t mem_corruption_marker5 = 0;
+  uint64_t mem_corruption_marker6 = 0;
+  uint64_t mem_corruption_marker7 = 0;
+  uint64_t mem_corruption_marker8 = 0;
+//  uint64_t mem_corruption_marker9 = 0;
+};
+
 class Player : public rclcpp::Node
 {
 public:

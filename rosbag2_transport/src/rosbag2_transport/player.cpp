@@ -74,6 +74,40 @@ rclcpp::QoS publisher_qos_for_topic(
 namespace rosbag2_transport
 {
 
+const size_t DebugPlayer::message_queue_type_size_ = sizeof(DebugPlayer::message_queue_type);
+const size_t DebugPlayer::srv_pause_type_size_ = sizeof(service_pause_type);
+
+DebugPlayer::DebugPlayer(const std::string & node_name)  // ,
+//  const rclcpp::NodeOptions & node_options)
+// : rclcpp::Node(node_name, node_options)
+{
+  (void)node_name;
+  std::cout << "sizeof(SerializedBagMessage) = " <<
+    sizeof(rosbag2_storage::SerializedBagMessage) << std::endl;
+
+  std::cout << "sizeof(SerializedBagMessageSharedPtr) = " <<
+    sizeof(rosbag2_storage::SerializedBagMessageSharedPtr) << std::endl;
+
+  std::cout << "sizeof(moodycamel::ReaderWriterQueue<SerializedBagMessage>) = " <<
+    sizeof(moodycamel::ReaderWriterQueue<rosbag2_storage::SerializedBagMessage>) << std::endl;
+
+  std::cout << "sizeof(decltype(message_queue_)) = " <<
+    sizeof(decltype(message_queue_)) << std::endl;
+
+  std::cout << "message_queue_type_size_ = " << message_queue_type_size_ << std::endl;
+
+  std::cout << "srv_pause_type_size_ = " << srv_pause_type_size_ << std::endl;
+
+//  srv_pause_ = create_service<rosbag2_interfaces::srv::Pause>(
+//    "~/pause",
+//    [this](
+//      const std::shared_ptr<rmw_request_id_t>/* request_header */,
+//      const std::shared_ptr<rosbag2_interfaces::srv::Pause::Request>/* request */,
+//      const std::shared_ptr<rosbag2_interfaces::srv::Pause::Response>/* response */) {
+//      pause();
+//    });
+}
+
 Player::Player(const std::string & node_name, const rclcpp::NodeOptions & node_options)
 : rclcpp::Node(node_name, node_options)
 {
